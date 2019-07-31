@@ -19,7 +19,7 @@ func (this *DesensitizeClass) SetSensitiveStrs(str string) {
 	this.SensitiveStr = str
 }
 
-func (this *DesensitizeClass) desensitizeToString(data interface{}) string {
+func (this *DesensitizeClass) DesensitizeToString(data interface{}) string {
 	result, err := json.Marshal(data)
 	if err != nil {
 		panic(err)
@@ -30,9 +30,9 @@ func (this *DesensitizeClass) desensitizeToString(data interface{}) string {
 	return rep
 }
 
-func (this *DesensitizeClass) desensitize(data interface{}) interface{} {
+func (this *DesensitizeClass) Desensitize(data interface{}) interface{} {
 	var result interface{}
-	str := this.desensitizeToString(data)
+	str := this.DesensitizeToString(data)
 	if err := json.Unmarshal([]byte(str), &result); err != nil {
 		panic(err)
 	}
