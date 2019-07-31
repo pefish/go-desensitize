@@ -1,1 +1,1 @@
-module github/pefish/go-desensitize
+module github.com/pefish/go-desensitize
