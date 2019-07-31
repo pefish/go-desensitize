@@ -9,7 +9,7 @@ type DesensitizeClass struct {
 	SensitiveStr string
 }
 
-var DEFAULT_DESENSITIVESTR = `pass|token|password|key|pkey`
+var DEFAULT_DESENSITIVESTR = `pass|token|password|key|pkey|secret|secretKey`
 
 var desensitize = DesensitizeClass{
 	SensitiveStr: DEFAULT_DESENSITIVESTR,
