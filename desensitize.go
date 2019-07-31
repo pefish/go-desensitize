@@ -11,7 +11,7 @@ type DesensitizeClass struct {
 
 var DEFAULT_DESENSITIVESTR = `pass|token|password|key|pkey|secret|secretKey`
 
-var desensitize = DesensitizeClass{
+var Desensitize = DesensitizeClass{
 	SensitiveStr: DEFAULT_DESENSITIVESTR,
 }
 

@@ -43,7 +43,7 @@ func TestDesensitizeClass_desensitizeToString(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := desensitize.desensitizeToString(tt.args.data); got != tt.want {
+			if got := Desensitize.desensitizeToString(tt.args.data); got != tt.want {
 				t.Errorf("DesensitizeClass.desensitizeToString() = %v, want %v", got, tt.want)
 			}
 		})
@@ -80,7 +80,7 @@ func TestDesensitizeClass_desensitize(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := desensitize.desensitize(tt.args.data); !reflect.DeepEqual(got.(map[string]interface{})[`token`], tt.want) {
+			if got := Desensitize.desensitize(tt.args.data); !reflect.DeepEqual(got.(map[string]interface{})[`token`], tt.want) {
 				t.Errorf("DesensitizeClass.desensitize() = %v, want %v", got, tt.want)
 			}
 		})
