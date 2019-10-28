@@ -1,9 +1,24 @@
 package go_desensitize
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
+
+func TestDesensitizeClass_DesensitizeToString(t *testing.T) {
+	type Test struct {
+		A     string `json:"token65"`
+		Token string `json:"41password"`
+	}
+
+	test := Test{
+		A: `21`,
+		Token: `sgshgj`,
+	}
+	a := Desensitize.DesensitizeToString(test)
+	fmt.Println(a)
+}
 
 func TestDesensitizeClass_desensitizeToString(t *testing.T) {
 	type Test struct {

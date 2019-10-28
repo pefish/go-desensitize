@@ -2,32 +2,41 @@ package go_desensitize
 
 import (
 	"encoding/json"
+	"fmt"
 	"regexp"
 )
 
 type DesensitizeClass struct {
-	SensitiveStr string
+	sensitiveStrArr []string
 }
 
-var DEFAULT_DESENSITIVESTR = `pass|token|password|key|pkey|secret|secretKey`
+var DEFAULT_DESENSITIVESTR = []string{
+	`.*?pass.*?`,
+	`.*?token.*?`,
+	`.*?key.*?`,
+	`.*?secret.*?`,
+}
 
 var Desensitize = DesensitizeClass{
-	SensitiveStr: DEFAULT_DESENSITIVESTR,
+	sensitiveStrArr: DEFAULT_DESENSITIVESTR,
 }
 
-func (this *DesensitizeClass) SetSensitiveStrs(str string) {
-	this.SensitiveStr = str
+func (this *DesensitizeClass) SetSensitiveStrs(str []string) {
+	this.sensitiveStrArr = str
 }
 
 func (this *DesensitizeClass) DesensitizeToString(data interface{}) string {
-	result, err := json.Marshal(data)
+	marshalResult, err := json.Marshal(data)
 	if err != nil {
 		panic(err)
 	}
-	str := string(result)
-	re := regexp.MustCompile(`("(`+ this.SensitiveStr  +`)":").*?(")`)
-	rep := re.ReplaceAllString(str, "$1****$3")
-	return rep
+	str := string(marshalResult)
+	for _, v := range this.sensitiveStrArr {
+		regStr := fmt.Sprintf(`("%s":").*?(")`, v)
+		re := regexp.MustCompile(regStr)
+		str = re.ReplaceAllString(str, "$1****$2")
+	}
+	return str
 }
 
 func (this *DesensitizeClass) Desensitize(data interface{}) interface{} {
