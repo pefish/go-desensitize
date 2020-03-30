@@ -3,6 +3,7 @@ package go_desensitize
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 	"regexp"
 )
 
@@ -26,11 +27,20 @@ func (this *DesensitizeClass) SetSensitiveStrs(str []string) {
 }
 
 func (this *DesensitizeClass) DesensitizeToString(data interface{}) string {
-	marshalResult, err := json.Marshal(data)
-	if err != nil {
-		panic(err)
+	type_ := reflect.TypeOf(data)
+	str := ``
+	if type_.Kind() == reflect.String {
+		str = data.(string)
+		// 去除所有空格
+		re := regexp.MustCompile(` `)
+		str = re.ReplaceAllString(str, "")
+	} else {
+		marshalResult, err := json.Marshal(data)
+		if err != nil {
+			panic(err)
+		}
+		str = string(marshalResult)
 	}
-	str := string(marshalResult)
 	for _, v := range this.sensitiveStrArr {
 		regStr := fmt.Sprintf(`("%s":").*?(")`, v)
 		re := regexp.MustCompile(regStr)

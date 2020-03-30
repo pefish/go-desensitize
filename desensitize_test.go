@@ -6,6 +6,13 @@ import (
 	"testing"
 )
 
+func ExampleDesensitizeClass_DesensitizeToString() {
+	a := Desensitize.DesensitizeToString(`{"a": "57", "token": "uejdsh"}`)
+	fmt.Println(a)
+	// Output:
+	// {"a":"57","token":"****"}
+}
+
 func TestDesensitizeClass_DesensitizeToString(t *testing.T) {
 	type Test struct {
 		A     string `json:"token65"`
