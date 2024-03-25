@@ -22,11 +22,22 @@ var Desensitize = DesensitizeClass{
 	sensitiveStrArr: DEFAULT_DESENSITIVESTR,
 }
 
-func (this *DesensitizeClass) SetSensitiveStrs(str []string) {
-	this.sensitiveStrArr = str
+func (d *DesensitizeClass) SetSensitiveStrs(str []string) {
+	d.sensitiveStrArr = str
 }
 
-func (this *DesensitizeClass) DesensitizeToString(data interface{}) string {
+func (d *DesensitizeClass) MustDesensitizeToString(data interface{}) string {
+	r, err := d.DesensitizeToString(data)
+	if err != nil {
+		panic(err)
+	}
+	return r
+}
+
+func (d *DesensitizeClass) DesensitizeToString(data interface{}) (string, error) {
+	if data == nil {
+		return "Nil", nil
+	}
 	type_ := reflect.TypeOf(data)
 	str := ``
 	if type_.Kind() == reflect.String {
@@ -37,23 +48,38 @@ func (this *DesensitizeClass) DesensitizeToString(data interface{}) string {
 	} else {
 		marshalResult, err := json.Marshal(data)
 		if err != nil {
-			panic(err)
+			return "", err
 		}
 		str = string(marshalResult)
 	}
-	for _, v := range this.sensitiveStrArr {
+	for _, v := range d.sensitiveStrArr {
 		regStr := fmt.Sprintf(`("%s":").*?(")`, v)
 		re := regexp.MustCompile(regStr)
 		str = re.ReplaceAllString(str, "$1****$2")
 	}
-	return str
+	return str, nil
 }
 
-func (this *DesensitizeClass) Desensitize(data interface{}) interface{} {
-	var result interface{}
-	str := this.DesensitizeToString(data)
-	if err := json.Unmarshal([]byte(str), &result); err != nil {
+func (d *DesensitizeClass) MustDesensitize(data interface{}) interface{} {
+	r, err := d.Desensitize(data)
+	if err != nil {
 		panic(err)
 	}
-	return result
+	return r
+}
+
+func (d *DesensitizeClass) Desensitize(data interface{}) (interface{}, error) {
+	var result interface{}
+	str, err := d.DesensitizeToString(data)
+	if err != nil {
+		return nil, err
+	}
+	if str == "Nil" {
+		return nil, nil
+	}
+	err = json.Unmarshal([]byte(str), &result)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }
